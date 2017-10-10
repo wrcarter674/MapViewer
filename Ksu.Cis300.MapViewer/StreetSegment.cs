@@ -19,12 +19,13 @@ namespace Ksu.Cis300.MapViewer
         /// <param name="start">The starting point of the street</param>
         /// <param name="end">The ending points of the street</param>
         /// <param name="color">The color of the street</param>
+        /// <param name="width">The width of the pen</param>
         /// <param name="zoomLevel">the visible zoom level of the street</param>
-        public StreetSegment(PointF start, PointF end, Color color, int zoomLevel)
+        public StreetSegment(PointF start, PointF end, Color color, float width, int zoomLevel)
         {
             _end = end;
             _start = start;
-            _pen = new Pen(color, 10);
+            _pen = new Pen(color, width);
             _visibleLevels = zoomLevel;
         }
         /// <summary>

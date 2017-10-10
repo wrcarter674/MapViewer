@@ -9,7 +9,10 @@ namespace Ksu.Cis300.MapViewer
 {
     class QuadTree
     {
-       
+        private QuadTree _nwTree = null;
+        private QuadTree _neTree = null;
+        private QuadTree _swTree = null;
+        private QuadTree _seTree = null;   
         private RectangleF _bounds;
         private List<StreetSegment> _streets;
         /// <summary>
@@ -114,20 +117,60 @@ namespace Ksu.Cis300.MapViewer
         public QuadTree(List<StreetSegment> streets, RectangleF area, int height)
         {
             _bounds = area;
-            _streets = streets;
+      
             if (height == 0)
             {
                 _streets = streets;
             }
             else
             {
+                _streets = streets;
                 List<StreetSegment> northSide = null;
                 List<StreetSegment> southSide = null;
-                List<StreetSegment> eastSide = null;
-                List<StreetSegment> westSide = null;
+
+                List<StreetSegment> nwSide = null;
+                List<StreetSegment> neSide = null;
+                List<StreetSegment> swSide = null;
+                List<StreetSegment> seSide = null;
                 List<StreetSegment> node = _streets;
-                SplitNorthSouth(node, _bounds.Height / 2 + _bounds.Top, northSide, southSide);
-                SplitEastWest(northSide, _bounds.Width / +_bounds.Left, nw, ne);
+                float newWidth = _bounds.Width / 2;
+                float newHeight = _bounds.Height / 2;                
+                float x = (_bounds.Width / 2) + _bounds.Left;
+                float y = _bounds.Top - (_bounds.Height / 2);
+                SplitNorthSouth(node, y, northSide, southSide);
+                SplitEastWest(northSide, x, nwSide, neSide);
+                SplitEastWest(southSide, _bounds.Width / 2 + _bounds.Left, swSide, seSide);
+                
+                _neTree = new QuadTree(neSide, new RectangleF(x, _bounds.Top, newWidth, newHeight), height-1);
+                _nwTree = new QuadTree(nwSide, new RectangleF(_bounds.Left, _bounds.Top, newWidth, newHeight), height-1);
+                _seTree = new QuadTree(seSide, new RectangleF(x, y, newWidth, newHeight), height-1);
+                _swTree = new QuadTree(swSide, new RectangleF(_bounds.Top, y, newWidth, newHeight), height-1);
+            }
+        }
+        /// <summary>
+        /// A method to draw the contents of the tree. 
+        /// </summary>
+        /// <param name="drawing">the graphic being drawn</param>
+        /// <param name="scale">the scale factor for translating map coordinates to pixel coordinates</param>
+        /// <param name="maxDepth">the maximum depth of tree nodes</param>
+        public void Draw(Graphics drawing, int scale, int maxDepth)
+        {
+            RectangleF rec =drawing.ClipBounds;
+            float x = rec.X / scale;
+            float y = rec.Y / scale;
+            float width = rec.Width / scale;
+            float height = rec.Height / scale;
+            RectangleF temp = new RectangleF(x, y, width, height);
+            if (temp.IntersectsWith(_bounds))
+            {
+                foreach(StreetSegment str in  _streets)
+                {
+                    str.Draw(drawing, scale);
+                    if (maxDepth > 0)
+                    {
+                        Draw(drawing, scale, maxDepth - 1);
+                    }
+                }
             }
         }
     }

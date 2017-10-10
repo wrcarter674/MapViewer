@@ -45,6 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Map.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Map.Designer.cs">
+      <DependentUpon>Map.cs</DependentUpon>
+    </Compile>
     <Compile Include="QuadTree.cs" />
     <Compile Include="StreetSegment.cs" />
     <Compile Include="UserInterface.cs">
@@ -55,6 +61,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Map.resx">
+      <DependentUpon>Map.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserInterface.resx">
       <DependentUpon>UserInterface.cs</DependentUpon>
     </EmbeddedResource>
