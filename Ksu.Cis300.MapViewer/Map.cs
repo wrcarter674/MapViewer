@@ -51,7 +51,7 @@ namespace Ksu.Cis300.MapViewer
             InitializeComponent();
             _tree = new QuadTree(streets, bounds, _maxZoom);
             _scale = scale;
-            bounds.Size= bounds.Size*scale;
+            Map.Size = new Size(bounds.Width * scale, bounds.Height * scale);
         }
        
         /// <summary>
