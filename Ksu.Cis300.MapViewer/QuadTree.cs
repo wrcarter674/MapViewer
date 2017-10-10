@@ -98,8 +98,8 @@ namespace Ksu.Cis300.MapViewer
                     float x = (((str.End.X - str.Start.X) * (split - str.Start.Y))
                         / (str.End.Y - str.Start.Y))
                         + str.Start.X;
-                    PointF start = new PointF(split, y);
-                    PointF end = new PointF(split, y);
+                    PointF start = new PointF(split, x);
+                    PointF end = new PointF(split, x);
                     temp.Start = start;
                     southSide.Add(temp);
                     temp2.End = end;
