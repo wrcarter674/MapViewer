@@ -28,32 +28,65 @@ namespace Ksu.Cis300.MapViewer
         /// <param name="scale">the scale factor of the map</param>
         public Map(List<StreetSegment> streets, RectangleF bounds, int scale)
         {
-            
             int count = 0;
             try
             {
                 foreach (StreetSegment str in streets)
                 {
-                    if (IsWithinBounds(str.Start, bounds) && IsWithinBounds(str.Start, bounds))
-                    {
-                        count++;
-                    }
-                    else
+                    if (!IsWithinBounds(str.Start, bounds) || !IsWithinBounds(str.Start, bounds))
                     {
                         throw new ArgumentException();
                     }
+                    count++;
                 }
             }
             catch (ArgumentException)
             {
                 MessageBox.Show("Street " + count + " is not within the given bounds");
             }
+
             InitializeComponent();
+
             _tree = new QuadTree(streets, bounds, _maxZoom);
             _scale = scale;
-            Map.Size = new Size(bounds.Width * scale, bounds.Height * scale);
+            Size size = new Size(Convert.ToInt32(bounds.Width*scale), Convert.ToInt32(bounds.Height*scale));
+            Size = size;
         }
-       
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            RectangleF rectangle = e.ClipRectangle;
+            Graphics drawing = e.Graphics;
+            Region region = new Region(rectangle);
+            drawing.Clip = region;
+            _tree.Draw(drawing, _scale, _zoom); 
+        }
+        /// <summary>
+        /// Will zoom in the map
+        /// </summary>
+        public void ZoomIn()
+        {
+            if (CanZoomIn())
+            {
+                _zoom++;
+                _scale *= 2;
+                Size = new Size(Size.Width * 2, Size.Height * 2);
+                Invalidate();
+            }
+        }
+        /// <summary>
+        /// Will zoom out the map
+        /// </summary>
+        public void ZoomOut()
+        {
+            if (CanZoomOut())
+            {
+                _zoom--;
+                _scale /= 2;
+                Size = new Size(Size.Width / 2, Size.Height / 2);
+                Invalidate();
+            }
+        }
         /// <summary>
         /// Will check if the map can zoom out at the current zoom level.
         /// </summary>
@@ -92,23 +125,9 @@ namespace Ksu.Cis300.MapViewer
         /// <returns></returns>
         private static bool IsWithinBounds(PointF point, RectangleF rectangle)
         {
-            if (rectangle.Contains(point))
-            {
-                return true;
-            }
-            else if(point.Y == rectangle.Top && point.X <= rectangle.Left && point.X >= rectangle.Right)
-            {
-                return true;
-            }
-            else if(point.Y == rectangle.Bottom && point.X <= rectangle.Left && point.X >= rectangle.Right)
-            {
-                return true;
-            }
-            else if(point.X == rectangle.Left && point.Y <= rectangle.Top && point.Y >= rectangle.Bottom)
-            {
-                return true;
-            }
-            else if(point.X == rectangle.Right && point.Y <= rectangle.Top && point.Y >= rectangle.Bottom)
+            float x = point.X;
+            float y = point.Y;
+            if(x >= rectangle.Left && x<= rectangle.Right && y<= rectangle.Bottom && y>= rectangle.Top)
             {
                 return true;
             }
@@ -116,6 +135,7 @@ namespace Ksu.Cis300.MapViewer
             {
                 return false;
             }
+            
         }
        
  

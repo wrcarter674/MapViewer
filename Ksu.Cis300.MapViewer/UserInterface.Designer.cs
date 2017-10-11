@@ -58,6 +58,7 @@
             this.uxOpenMap.Name = "uxOpenMap";
             this.uxOpenMap.Size = new System.Drawing.Size(67, 22);
             this.uxOpenMap.Text = "Open Map";
+            this.uxOpenMap.Click += new System.EventHandler(this.uxOpenMap_Click);
             // 
             // uxZoomIn
             // 

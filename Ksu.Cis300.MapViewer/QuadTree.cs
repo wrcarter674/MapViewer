@@ -124,7 +124,7 @@ namespace Ksu.Cis300.MapViewer
             }
             else
             {
-                _streets = streets;
+                List<StreetSegment> nonVisible = null;
                 List<StreetSegment> northSide = null;
                 List<StreetSegment> southSide = null;
 
@@ -132,11 +132,14 @@ namespace Ksu.Cis300.MapViewer
                 List<StreetSegment> neSide = null;
                 List<StreetSegment> swSide = null;
                 List<StreetSegment> seSide = null;
-                List<StreetSegment> node = _streets;
+               
                 float newWidth = _bounds.Width / 2;
                 float newHeight = _bounds.Height / 2;                
                 float x = (_bounds.Width / 2) + _bounds.Left;
                 float y = _bounds.Top - (_bounds.Height / 2);
+
+                SplitVisbility(streets, height, _streets, nonVisible);
+                List<StreetSegment> node = _streets;
                 SplitNorthSouth(node, y, northSide, southSide);
                 SplitEastWest(northSide, x, nwSide, neSide);
                 SplitEastWest(southSide, _bounds.Width / 2 + _bounds.Left, swSide, seSide);
@@ -168,7 +171,10 @@ namespace Ksu.Cis300.MapViewer
                     str.Draw(drawing, scale);
                     if (maxDepth > 0)
                     {
-                        Draw(drawing, scale, maxDepth - 1);
+                        _nwTree.Draw(drawing, scale, maxDepth - 1);
+                        _neTree.Draw(drawing, scale, maxDepth - 1);
+                        _swTree.Draw(drawing, scale, maxDepth - 1);
+                        _seTree.Draw(drawing, scale, maxDepth - 1);
                     }
                 }
             }
