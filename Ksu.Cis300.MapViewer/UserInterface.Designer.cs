@@ -68,6 +68,7 @@
             this.uxZoomIn.Name = "uxZoomIn";
             this.uxZoomIn.Size = new System.Drawing.Size(56, 22);
             this.uxZoomIn.Text = "Zoom In";
+            this.uxZoomIn.Click += new System.EventHandler(this.uxZoomIn_Click);
             // 
             // uxZoomOut
             // 
@@ -77,6 +78,7 @@
             this.uxZoomOut.Name = "uxZoomOut";
             this.uxZoomOut.Size = new System.Drawing.Size(66, 22);
             this.uxZoomOut.Text = "Zoom Out";
+            this.uxZoomOut.Click += new System.EventHandler(this.uxZoomOut_Click_1);
             // 
             // uxMapContainer
             // 

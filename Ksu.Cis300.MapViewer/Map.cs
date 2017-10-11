@@ -29,37 +29,31 @@ namespace Ksu.Cis300.MapViewer
         public Map(List<StreetSegment> streets, RectangleF bounds, int scale)
         {
             int count = 0;
-            try
+            
+            foreach (StreetSegment str in streets)
             {
-                foreach (StreetSegment str in streets)
+                if (!IsWithinBounds(str.Start, bounds) || !IsWithinBounds(str.End, bounds))
                 {
-                    if (!IsWithinBounds(str.Start, bounds) || !IsWithinBounds(str.Start, bounds))
-                    {
-                        throw new ArgumentException();
-                    }
-                    count++;
+                    throw new ArgumentException("Street " + count + " is not within the given bounds");
                 }
+                count++;
             }
-            catch (ArgumentException)
-            {
-                MessageBox.Show("Street " + count + " is not within the given bounds");
-            }
+            
+           
 
             InitializeComponent();
 
             _tree = new QuadTree(streets, bounds, _maxZoom);
             _scale = scale;
-            Size size = new Size(Convert.ToInt32(bounds.Width*scale), Convert.ToInt32(bounds.Height*scale));
+            Size size = new Size(Convert.ToInt32(bounds.Size.Width*scale), Convert.ToInt32(bounds.Size.Height*scale));
             Size = size;
         }
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            RectangleF rectangle = e.ClipRectangle;
-            Graphics drawing = e.Graphics;
-            Region region = new Region(rectangle);
-            drawing.Clip = region;
-            _tree.Draw(drawing, _scale, _zoom); 
+          
+            e.Graphics.Clip = new Region(e.ClipRectangle);
+            _tree.Draw(e.Graphics, _scale, _zoom); 
         }
         /// <summary>
         /// Will zoom in the map

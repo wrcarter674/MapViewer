@@ -22,42 +22,72 @@ namespace Ksu.Cis300.MapViewer
 
         private static List<StreetSegment> ReadFile(string fileName, out RectangleF rectangle)
         {
-            List<StreetSegment> list = null;
-            int count = 0;
-            float width;
-            float height;
+            List<StreetSegment> list = new List<StreetSegment>();
+            
+         
             using (StreamReader input = new StreamReader(fileName))
             {
                 string[] conttents = input.ReadLine().Split(',');
-                width = Convert.ToSingle(conttents[0]);
-                height = Convert.ToSingle(conttents[1]);
+                rectangle = new RectangleF(0, 0, Convert.ToSingle(conttents[0]), Convert.ToSingle(conttents[1]));
                 while (!input.EndOfStream)
                 {
-                    string line = input.ReadLine();
-                    string[] contents = line.Split(',');
-                   
+                    string[] contents = input.ReadLine().Split(',');
+                                     
                     PointF start = new PointF(Convert.ToSingle(contents[0]), Convert.ToSingle(contents[1]));
                     PointF end = new PointF(Convert.ToSingle(contents[2]), Convert.ToSingle(contents[3]));
                     StreetSegment str = new StreetSegment(start, end, Color.FromArgb(Convert.ToInt32(contents[4])), Convert.ToSingle(contents[5]), Convert.ToInt32(contents[6]));
                     list.Add(str);
                     
                 }
-
             }
-            rectangle = new RectangleF(0, 0, width, height);
+            
             return list;
         }
 
         private void uxOpenMap_Click(object sender, EventArgs e)
         {
-            if(uxOpenDialog.ShowDialog() == DialogResult.OK)
+            List<StreetSegment> strs = null;
+            RectangleF bounds;
+            if (uxOpenDialog.ShowDialog() == DialogResult.OK)
             {
-                string filename = uxOpenDialog.FileName;
-                RectangleF rectangle = new RectangleF();
-                List<StreetSegment> strs = ReadFile(filename, out rectangle);
-                _map = new Map(strs, rectangle, _initalScale);
-                _map.Clear();
+                try
+                {
+                    
+                    strs = ReadFile(uxOpenDialog.FileName, out bounds);
+                    _map = new Map(strs, bounds, _initalScale);
+                    uxMapContainer.Controls.Clear();
+                    uxMapContainer.Controls.Add(_map);
+                    uxZoomIn.Enabled = true;
+                    uxZoomOut.Enabled = false;
+                }catch(Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             }
+        }
+
+        private void uxZoomIn_Click(object sender, EventArgs e)
+        {
+            Point scrollPosition = uxMapContainer.AutoScrollPosition;
+            scrollPosition.X = scrollPosition.X * -1;
+            scrollPosition.Y = scrollPosition.Y * -1;
+            _map.ZoomIn();
+            uxZoomIn.Enabled = _map.CanZoomIn();
+            uxZoomOut.Enabled = _map.CanZoomOut();
+            uxMapContainer.AutoScrollPosition = new Point(scrollPosition.X * 2 + uxMapContainer.ClientSize.Width / 2, scrollPosition.Y * 2 + uxMapContainer.ClientSize.Height / 2);
+        }
+
+        
+
+        private void uxZoomOut_Click_1(object sender, EventArgs e)
+        {
+            Point scrollPosition = uxMapContainer.AutoScrollPosition;
+            scrollPosition.X = scrollPosition.X * -1;
+            scrollPosition.Y = scrollPosition.Y * -1;
+            _map.ZoomOut();
+            uxZoomIn.Enabled = _map.CanZoomIn();
+            uxZoomOut.Enabled = _map.CanZoomOut();
+            uxMapContainer.AutoScrollPosition = new Point(scrollPosition.X / 2 + uxMapContainer.ClientSize.Width / 4, scrollPosition.Y / 2 + uxMapContainer.ClientSize.Height / 4);
         }
     }
 }

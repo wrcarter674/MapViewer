@@ -14,7 +14,7 @@ namespace Ksu.Cis300.MapViewer
         private QuadTree _swTree = null;
         private QuadTree _seTree = null;   
         private RectangleF _bounds;
-        private List<StreetSegment> _streets;
+        private List<StreetSegment> _streets = new List<StreetSegment>();
         /// <summary>
         /// Will spit all the streets into visible and non visible streets
         /// </summary>
@@ -62,11 +62,9 @@ namespace Ksu.Cis300.MapViewer
                     float y = (((str.End.Y - str.Start.Y) * (split - str.Start.X))
                         / (str.End.X - str.Start.X))
                         + str.Start.Y;
-                    PointF start = new PointF(split, y);
-                    PointF end = new PointF(split, y);
-                    temp.Start = start;
+                    temp.Start = new PointF(split, y);
                     eastSide.Add(temp);
-                    temp2.End = end;
+                    temp2.End = new PointF(split, y);
                     westSide.Add(temp2);
                 }
                     
@@ -98,11 +96,10 @@ namespace Ksu.Cis300.MapViewer
                     float x = (((str.End.X - str.Start.X) * (split - str.Start.Y))
                         / (str.End.Y - str.Start.Y))
                         + str.Start.X;
-                    PointF start = new PointF(split, x);
-                    PointF end = new PointF(split, x);
-                    temp.Start = start;
+                    
+                    temp.End = new PointF(x, split); 
                     southSide.Add(temp);
-                    temp2.End = end;
+                    temp2.Start = new PointF(x, split);
                     northSide.Add(temp2);
                 }
 
@@ -124,30 +121,30 @@ namespace Ksu.Cis300.MapViewer
             }
             else
             {
-                List<StreetSegment> nonVisible = null;
-                List<StreetSegment> northSide = null;
-                List<StreetSegment> southSide = null;
+                List<StreetSegment> nonVisible = new List<StreetSegment>();
+                List<StreetSegment> northSide = new List<StreetSegment>();
+                List<StreetSegment> southSide = new List<StreetSegment>();
 
-                List<StreetSegment> nwSide = null;
-                List<StreetSegment> neSide = null;
-                List<StreetSegment> swSide = null;
-                List<StreetSegment> seSide = null;
-               
-                float newWidth = _bounds.Width / 2;
-                float newHeight = _bounds.Height / 2;                
-                float x = (_bounds.Width / 2) + _bounds.Left;
-                float y = _bounds.Top - (_bounds.Height / 2);
+                List<StreetSegment> nwSide = new List<StreetSegment>();
+                List<StreetSegment> neSide = new List<StreetSegment>();
+                List<StreetSegment> swSide = new List<StreetSegment>();
+                List<StreetSegment> seSide = new List<StreetSegment>();
 
-                SplitVisbility(streets, height, _streets, nonVisible);
-                List<StreetSegment> node = _streets;
-                SplitNorthSouth(node, y, northSide, southSide);
-                SplitEastWest(northSide, x, nwSide, neSide);
-                SplitEastWest(southSide, _bounds.Width / 2 + _bounds.Left, swSide, seSide);
+                float newWidth = area.Width / 2;
+                float newHeight = area.Height / 2;                
+                float x = (area.Width / 2) + area.Left;
+                float y = area.Top +(area.Height / 2);
                 
-                _neTree = new QuadTree(neSide, new RectangleF(x, _bounds.Top, newWidth, newHeight), height-1);
-                _nwTree = new QuadTree(nwSide, new RectangleF(_bounds.Left, _bounds.Top, newWidth, newHeight), height-1);
+                SplitVisbility(streets, height, _streets, nonVisible);
+                
+                SplitNorthSouth(nonVisible, y, northSide, southSide);
+                SplitEastWest(northSide, x, nwSide, neSide);
+                SplitEastWest(southSide, x, swSide, seSide);
+                
+                _neTree = new QuadTree(neSide, new RectangleF(x, area.Top, newWidth, newHeight), height-1);
+                _nwTree = new QuadTree(nwSide, new RectangleF(area.Left, area.Top, newWidth, newHeight), height-1);
                 _seTree = new QuadTree(seSide, new RectangleF(x, y, newWidth, newHeight), height-1);
-                _swTree = new QuadTree(swSide, new RectangleF(_bounds.Top, y, newWidth, newHeight), height-1);
+                _swTree = new QuadTree(swSide, new RectangleF(area.Left, y, newWidth, newHeight), height-1);
             }
         }
         /// <summary>
@@ -158,24 +155,21 @@ namespace Ksu.Cis300.MapViewer
         /// <param name="maxDepth">the maximum depth of tree nodes</param>
         public void Draw(Graphics drawing, int scale, int maxDepth)
         {
-            RectangleF rec =drawing.ClipBounds;
-            float x = rec.X / scale;
-            float y = rec.Y / scale;
-            float width = rec.Width / scale;
-            float height = rec.Height / scale;
-            RectangleF temp = new RectangleF(x, y, width, height);
-            if (temp.IntersectsWith(_bounds))
+            RectangleF rec = new RectangleF(drawing.ClipBounds.X / scale, drawing.ClipBounds.Y / scale, drawing.ClipBounds.Width / scale, drawing.ClipBounds.Height / scale); ;
+           
+            if (rec.IntersectsWith(_bounds))
             {
                 foreach(StreetSegment str in  _streets)
                 {
                     str.Draw(drawing, scale);
-                    if (maxDepth > 0)
-                    {
-                        _nwTree.Draw(drawing, scale, maxDepth - 1);
-                        _neTree.Draw(drawing, scale, maxDepth - 1);
-                        _swTree.Draw(drawing, scale, maxDepth - 1);
-                        _seTree.Draw(drawing, scale, maxDepth - 1);
-                    }
+                    
+                }
+                if (maxDepth > 0)
+                {
+                    _nwTree.Draw(drawing, scale, maxDepth - 1);
+                    _neTree.Draw(drawing, scale, maxDepth - 1);
+                    _swTree.Draw(drawing, scale, maxDepth - 1);
+                    _seTree.Draw(drawing, scale, maxDepth - 1);
                 }
             }
         }
