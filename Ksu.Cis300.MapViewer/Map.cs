@@ -51,9 +51,11 @@ namespace Ksu.Cis300.MapViewer
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-          
-            e.Graphics.Clip = new Region(e.ClipRectangle);
-            _tree.Draw(e.Graphics, _scale, _zoom); 
+           
+            Region region = new Region(e.ClipRectangle);
+            Graphics graphics = e.Graphics;
+            graphics.Clip = region;
+            _tree.Draw(graphics, _scale, _zoom); 
         }
         /// <summary>
         /// Will zoom in the map
@@ -77,7 +79,7 @@ namespace Ksu.Cis300.MapViewer
             {
                 _zoom--;
                 _scale /= 2;
-                Size = new Size(Size.Width / 2, Size.Height / 2);
+                Size = new Size(Size.Width/2, Size.Height/2);
                 Invalidate();
             }
         }

@@ -43,7 +43,11 @@ namespace Ksu.Cis300.MapViewer
             
             return list;
         }
-
+        /// <summary>
+        /// Button operator for the open map button. it will open a file dialog and read the contents.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void uxOpenMap_Click(object sender, EventArgs e)
         {
             List<StreetSegment> strs = null;
@@ -65,7 +69,11 @@ namespace Ksu.Cis300.MapViewer
                 }
             }
         }
-
+        /// <summary>
+        /// zoomin button click. Will update the cursor when zooming out and call the map class.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void uxZoomIn_Click(object sender, EventArgs e)
         {
             Point scrollPosition = uxMapContainer.AutoScrollPosition;
@@ -78,7 +86,11 @@ namespace Ksu.Cis300.MapViewer
         }
 
         
-
+        /// <summary>
+        /// zoomout button click. Will update the cursor when zooming out and call the map class.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void uxZoomOut_Click_1(object sender, EventArgs e)
         {
             Point scrollPosition = uxMapContainer.AutoScrollPosition;
@@ -87,7 +99,7 @@ namespace Ksu.Cis300.MapViewer
             _map.ZoomOut();
             uxZoomIn.Enabled = _map.CanZoomIn();
             uxZoomOut.Enabled = _map.CanZoomOut();
-            uxMapContainer.AutoScrollPosition = new Point(scrollPosition.X / 2 + uxMapContainer.ClientSize.Width / 4, scrollPosition.Y / 2 + uxMapContainer.ClientSize.Height / 4);
+            uxMapContainer.AutoScrollPosition = new Point(scrollPosition.X / 2 - uxMapContainer.ClientSize.Width / 4, scrollPosition.Y / 2 - uxMapContainer.ClientSize.Height / 4);
         }
     }
 }
