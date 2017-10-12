@@ -1,4 +1,7 @@
-﻿using System;
+﻿/*Map.cs
+ * By: William Carter
+ */
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;

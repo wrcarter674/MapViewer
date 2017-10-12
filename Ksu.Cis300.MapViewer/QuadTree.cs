@@ -1,4 +1,7 @@
-﻿using System;
+﻿/*QuadTree.cs
+ * By: William Carter
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -63,9 +66,9 @@ namespace Ksu.Cis300.MapViewer
                         / (str.End.X - str.Start.X))
                         + str.Start.Y;
                     temp.Start = new PointF(x, y);
-                    ///eastSide.Add(temp);
+                   
                     temp2.End = new PointF(x, y);
-                    ///westSide.Add(temp2);
+               
                     if(temp.End.X > x)
                     {
                         eastSide.Add(temp);

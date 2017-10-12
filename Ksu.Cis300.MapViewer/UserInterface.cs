@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*UserInterface.cs
+ * By: William Carter
+ */
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,7 +23,12 @@ namespace Ksu.Cis300.MapViewer
         {
             InitializeComponent();
         }
-
+        /// <summary>
+        /// Will read in the file using a streamreader. It puts it into a list.
+        /// </summary>
+        /// <param name="fileName">the name of the file being read</param>
+        /// <param name="rectangle">the rectangle out parameter that the streets go with</param>
+        /// <returns></returns>
         private static List<StreetSegment> ReadFile(string fileName, out RectangleF rectangle)
         {
             List<StreetSegment> list = new List<StreetSegment>();
